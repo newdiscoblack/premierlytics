@@ -46,5 +46,4 @@ class TeamListTableView: UITableViewController {
         
         return teamCell
     }
-    
 }
