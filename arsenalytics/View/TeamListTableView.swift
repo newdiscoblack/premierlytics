@@ -6,7 +6,7 @@ import UIKit
 class TeamListTableView: UITableViewController {
     
     private let resourceAdress: String = "https://api.football-data.org/v2/competitions/2021/teams"
-    var teamList = [TeamDetails]() {
+    private var teamList = [TeamDetails]() {
         didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()

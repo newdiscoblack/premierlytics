@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 
-
 extension UIButton {
     func setEqualSizeAndPlaceNextTo(object: UIButton) {
         self.frame = CGRect(x: object.frame.maxX, y: object.frame.minY, width: object.frame.size.width, height: object.frame.size.height)
@@ -31,3 +30,5 @@ extension UIButton {
         self.setImage(UIImage(data: receivedImageData!), for: .normal)
     }
 }
+
+

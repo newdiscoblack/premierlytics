@@ -2,29 +2,41 @@
 //  Copyright © 2019 jagiello.com. All rights reserved.
 
 import UIKit
+import WebKit
 
-class StartingView: UIViewController {
+class StartingView: UIViewController, WKNavigationDelegate {
     
-    let screenWidth = UIScreen.main.bounds.size.width
-    let screenHeight = UIScreen.main.bounds.size.height
+    private let screenWidth = UIScreen.main.bounds.size.width
+    private let screenHeight = UIScreen.main.bounds.size.height
     
     private let premierLeagueTableDataAdress: String = "https://api.football-data.org/v2/competitions/2021/standings"
+    
+    @objc private func displayPremierLeagueWebsite() {
+        let premierLeagueWebsiteView = PremierLeagueWebsiteViewController()
+        present(premierLeagueWebsiteView, animated: true)
+    }
+    
+    @objc private func displayStandingsTableView() {
+        let standingsTableView = StandingsTableView()
+        present(standingsTableView, animated: true)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationController?.isNavigationBarHidden = true
         
-        let topBarElementsCount = 4
-        let topBarItemSize = Int(screenWidth)/topBarElementsCount
+        let topBarElementsCount = 5
+        let topBarElementSize = Int(screenWidth)/topBarElementsCount
         
         let backgroundImage = UIImageView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
         backgroundImage.image = UIImage(named: "premierLeagueBackground")
         backgroundImage.contentMode = UIView.ContentMode.scaleAspectFill
         view.addSubview(backgroundImage)
         
-        let premierLeagueLogo = UIButton(frame: CGRect(x: 0, y: 50, width: topBarItemSize, height: topBarItemSize))
-        premierLeagueLogo.setImage(UIImage(named: "premierLeagueLogo"), for: UIControl.State.normal)
+        let premierLeagueLogo = UIButton(frame: CGRect(x: 0, y: 50, width: topBarElementSize, height: topBarElementSize))
+        premierLeagueLogo.setImage(UIImage(named: "premierLeagueLogo"), for: .normal)
+        premierLeagueLogo.addTarget(self, action: #selector(displayPremierLeagueWebsite), for: .touchUpInside)
         view.addSubview(premierLeagueLogo)
         
         let firstPlacedTeam = UIButton()
@@ -39,14 +51,28 @@ class StartingView: UIViewController {
         thirdPlacedTeam.setEqualSizeAndPlaceNextTo(object: secondPlacedTeam)
         view.addSubview(thirdPlacedTeam)
         
+        let viewWholeTable = UIButton()
+        viewWholeTable.setEqualSizeAndPlaceNextTo(object: thirdPlacedTeam)
+        viewWholeTable.setTitle("●●●", for: .normal)
+        viewWholeTable.titleLabel?.font = .systemFont(ofSize: 10.0)
+        viewWholeTable.addTarget(self, action: #selector(displayStandingsTableView), for: .touchUpInside)
+        view.addSubview(viewWholeTable)
+                
         var premierLeagueTable = [Team]() {
             didSet {
                 DispatchQueue.main.async {
-                    print("Data received")
+                    print("Data received.")
+                    
                     firstPlacedTeam.displayCrest(ofTeam: premierLeagueTable[0].team.id)
+                    firstPlacedTeam.displayAmountOfPoints(fromSource: premierLeagueTable[0].points)
+                    
                     secondPlacedTeam.displayCrest(ofTeam: premierLeagueTable[1].team.id)
+                    secondPlacedTeam.displayAmountOfPoints(fromSource: premierLeagueTable[1].points)
+                    
                     thirdPlacedTeam.displayCrest(ofTeam: premierLeagueTable[2].team.id)
-                    print("Crests displayed")
+                    thirdPlacedTeam.displayAmountOfPoints(fromSource: premierLeagueTable[2].points)
+                    
+                    print("Data displayed.")
                 }
             }
         }
@@ -62,7 +88,10 @@ class StartingView: UIViewController {
             }
         }
     }
+    //outside viewDidLoad()
+    
 }
+
 
 
 

@@ -6,7 +6,7 @@ import UIKit
 class StandingsTableView: UITableViewController {
     
     private let premierLeagueTableDataAdress: String = "https://api.football-data.org/v2/competitions/2021/standings"
-    var premierLeagueTable = [Team]() {
+    private var premierLeagueTable = [Team]() {
         didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -31,7 +31,7 @@ class StandingsTableView: UITableViewController {
         }
     }
     
-    func startObservingDeviceOrientation() {
+    private func startObservingDeviceOrientation() {
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         
         NotificationCenter.default.addObserver(self,
@@ -40,7 +40,7 @@ class StandingsTableView: UITableViewController {
         object: nil)
     }
 
-    @objc func orientationChanged(notification: NSNotification) {
+    @objc private func orientationChanged(notification: NSNotification) {
         tableView.reloadData()
     }
     
@@ -62,15 +62,4 @@ class StandingsTableView: UITableViewController {
         return teamInTheTable
     }
     
-    func showLessSeasonDetailsInPortraitMode(of cell: UITableViewCell, fromDataSource source: Team) {
-        cell.textLabel?.text = "\(source.position). " + source.team.name
-        cell.detailTextLabel?.text = "\(source.points) pts"
-    }
-    
-    func showMoreSeasonDetailsInLandscapeMode(of cell: UITableViewCell, fromDataSource source: Team) {
-        if UIDevice.current.orientation.isLandscape {
-            cell.textLabel?.text = "\(source.position). " + source.team.name
-            cell.detailTextLabel?.text = "\(source.points) pts W: \(source.won) D: \(source.draw) L: \(source.lost)"
-        }
-    }
 }

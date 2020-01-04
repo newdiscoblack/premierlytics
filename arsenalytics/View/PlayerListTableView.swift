@@ -6,7 +6,7 @@ import UIKit
 class PlayerListTableView: UITableViewController {
 
     private let resourceAdress: String = "https://api.football-data.org/v2/teams/57"
-    var squad = [Player]() {
+    private var squad = [Player]() {
         didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
