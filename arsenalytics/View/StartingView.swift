@@ -9,7 +9,10 @@ class StartingView: UIViewController, WKNavigationDelegate {
     private let screenWidth = UIScreen.main.bounds.size.width
     private let screenHeight = UIScreen.main.bounds.size.height
     
+    private let spacing : CGFloat = 40.0
+    
     private let premierLeagueTableDataAdress: String = "https://api.football-data.org/v2/competitions/2021/standings"
+    private var premierLeagueFixturesDataAdress: String = "https://api.football-data.org/v2/competitions/2021/matches?matchday=22"
     
     @objc private func displayPremierLeagueWebsite() {
         let premierLeagueWebsiteView = PremierLeagueWebsiteViewController()
@@ -57,6 +60,11 @@ class StartingView: UIViewController, WKNavigationDelegate {
         viewWholeTable.titleLabel?.font = .systemFont(ofSize: 10.0)
         viewWholeTable.addTarget(self, action: #selector(displayStandingsTableView), for: .touchUpInside)
         view.addSubview(viewWholeTable)
+        
+        let topThreeGoalscorers = UIButton()
+        topThreeGoalscorers.frame = CGRect(x: 10, y: premierLeagueLogo.frame.maxY + spacing, width: screenWidth - 20, height: 400.0)
+        topThreeGoalscorers.backgroundColor = .green
+        view.addSubview(topThreeGoalscorers)
                 
         var premierLeagueTable = [Team]() {
             didSet {
@@ -85,6 +93,18 @@ class StartingView: UIViewController, WKNavigationDelegate {
                 print(receivedError)
             case .success(let receivedData):
                 premierLeagueTable = receivedData
+            }
+        }
+        
+        let premierLeagueFixtures = CreateRequest(fromAdress: premierLeagueFixturesDataAdress)
+        
+        premierLeagueFixtures.getFixtures { result in
+            switch result {
+            case .failure(let receivedError):
+                print(receivedError)
+            case .success(let receivedData):
+                print("Received \(receivedData.count) fixtures.")
+                print("Data: \(receivedData)")
             }
         }
     }

@@ -84,4 +84,26 @@ struct CreateRequest {
         }
         dataTask.resume()
     }
+    
+    
+    func getFixtures(completion: @escaping(Result<Fixtures, responseError>) -> Void) {
+        let dataTask = URLSession.shared.dataTask(with: resourceRequest) { receivedData,_,_ in
+
+            guard let jsonData = receivedData else {
+                completion(.failure(.cannotReceiveData))
+                return
+            }
+
+            do {
+                let decoder = JSONDecoder()
+                let decodedClubData = try decoder.decode(Fixtures.self, from: jsonData)
+                let clubData = decodedClubData
+
+                completion(.success(clubData))
+            } catch {
+                completion(.failure(.errorAfterReceivingData))
+            }
+        }
+        dataTask.resume()
+    }
 }
