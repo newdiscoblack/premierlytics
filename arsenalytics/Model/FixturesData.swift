@@ -66,3 +66,4 @@ struct Referee: Decodable {
     var id: Int
     var name: String
 }
+

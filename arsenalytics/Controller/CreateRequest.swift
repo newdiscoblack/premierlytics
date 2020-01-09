@@ -22,7 +22,7 @@ struct CreateRequest {
         self.resourceRequest = resourceAdressToURLRequest
     }
     
-    func getStandingsData(completion: @escaping(Result<[Team], responseError>) -> Void) {
+    func getStandingsData(completion: @escaping(Result<PremierLeague, responseError>) -> Void) {
         let dataTask = URLSession.shared.dataTask(with: resourceRequest) { receivedData,_,_ in
 
             guard let jsonData = receivedData else {
@@ -33,7 +33,8 @@ struct CreateRequest {
             do {
                 let decoder = JSONDecoder()
                 let decodedStandingsData = try decoder.decode(PremierLeague.self, from: jsonData)
-                let standingsData = decodedStandingsData.standings.self[0].table
+                let standingsData = decodedStandingsData
+//                let standingsData = decodedStandingsData.standings.self[0].table
 
                 completion(.success(standingsData))
             } catch {

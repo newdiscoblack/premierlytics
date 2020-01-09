@@ -4,6 +4,7 @@
 import Foundation
 
 struct PremierLeague: Decodable {
+    var season: Season
     var standings: [Standings]
 }
 

@@ -26,7 +26,7 @@ class StandingsTableView: UITableViewController {
             case .failure(let receivedError):
                 print(receivedError)
             case .success(let receivedData):
-                self?.premierLeagueTable = receivedData
+                self?.premierLeagueTable = receivedData.standings[0].table
             }
         }
     }

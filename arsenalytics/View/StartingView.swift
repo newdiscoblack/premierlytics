@@ -11,8 +11,9 @@ class StartingView: UIViewController, WKNavigationDelegate {
     
     private let spacing : CGFloat = 40.0
     
+    private var currentMatchday: Int = 1 //default value
     private let premierLeagueTableDataAdress: String = "https://api.football-data.org/v2/competitions/2021/standings"
-    private var premierLeagueFixturesDataAdress: String = "https://api.football-data.org/v2/competitions/2021/matches?matchday=22"
+    private var premierLeagueFixturesDataAdress: String = ""
     
     @objc private func displayPremierLeagueWebsite() {
         let premierLeagueWebsiteView = PremierLeagueWebsiteViewController()
@@ -31,28 +32,43 @@ class StartingView: UIViewController, WKNavigationDelegate {
         
         let topBarElementsCount = 5
         let topBarElementSize = Int(screenWidth)/topBarElementsCount
+
+        let backgroundImage: UIImageView = {
+            let backgroundImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
+            backgroundImageView.image = UIImage(named: "premierLeagueBackground")
+            backgroundImageView.contentMode = UIView.ContentMode.scaleAspectFill
+            view.addSubview(backgroundImageView)
+            return backgroundImageView
+        }()
         
-        let backgroundImage = UIImageView(frame: CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight))
-        backgroundImage.image = UIImage(named: "premierLeagueBackground")
-        backgroundImage.contentMode = UIView.ContentMode.scaleAspectFill
-        view.addSubview(backgroundImage)
+        let premierLeagueLogo: UIButton = {
+            let topBarButtonSpace = UIButton(frame: CGRect(x: 0, y: 50, width: topBarElementSize, height: topBarElementSize))
+            topBarButtonSpace.setImage(UIImage(named: "premierLeagueLogo"), for: .normal)
+            topBarButtonSpace.addTarget(self, action: #selector(displayPremierLeagueWebsite), for: .touchUpInside)
+            view.addSubview(topBarButtonSpace)
+            return topBarButtonSpace
+        }()
         
-        let premierLeagueLogo = UIButton(frame: CGRect(x: 0, y: 50, width: topBarElementSize, height: topBarElementSize))
-        premierLeagueLogo.setImage(UIImage(named: "premierLeagueLogo"), for: .normal)
-        premierLeagueLogo.addTarget(self, action: #selector(displayPremierLeagueWebsite), for: .touchUpInside)
-        view.addSubview(premierLeagueLogo)
+        let firstPlacedTeam: UIButton = {
+            let topBarButtonSpace = UIButton()
+            topBarButtonSpace.setEqualSizeAndPlaceNextTo(object: premierLeagueLogo)
+            view.addSubview(topBarButtonSpace)
+            return topBarButtonSpace
+        }()
         
-        let firstPlacedTeam = UIButton()
-        firstPlacedTeam.setEqualSizeAndPlaceNextTo(object: premierLeagueLogo)
-        view.addSubview(firstPlacedTeam)
-        
-        let secondPlacedTeam = UIButton()
-        secondPlacedTeam.setEqualSizeAndPlaceNextTo(object: firstPlacedTeam)
-        view.addSubview(secondPlacedTeam)
-        
-        let thirdPlacedTeam = UIButton()
-        thirdPlacedTeam.setEqualSizeAndPlaceNextTo(object: secondPlacedTeam)
-        view.addSubview(thirdPlacedTeam)
+        let secondPlacedTeam: UIButton = {
+            let topBarButtonSpace = UIButton()
+            topBarButtonSpace.setEqualSizeAndPlaceNextTo(object: firstPlacedTeam)
+            view.addSubview(topBarButtonSpace)
+            return topBarButtonSpace
+        }()
+
+        let thirdPlacedTeam: UIButton = {
+            let topBarButtonSpace = UIButton()
+            topBarButtonSpace.setEqualSizeAndPlaceNextTo(object: secondPlacedTeam)
+            view.addSubview(topBarButtonSpace)
+            return topBarButtonSpace
+        }()
         
         let viewWholeTable = UIButton()
         viewWholeTable.setEqualSizeAndPlaceNextTo(object: thirdPlacedTeam)
@@ -61,26 +77,27 @@ class StartingView: UIViewController, WKNavigationDelegate {
         viewWholeTable.addTarget(self, action: #selector(displayStandingsTableView), for: .touchUpInside)
         view.addSubview(viewWholeTable)
         
-        let topThreeGoalscorers = UIButton()
-        topThreeGoalscorers.frame = CGRect(x: 10, y: premierLeagueLogo.frame.maxY + spacing, width: screenWidth - 20, height: 400.0)
-        topThreeGoalscorers.backgroundColor = .green
-        view.addSubview(topThreeGoalscorers)
-                
-        var premierLeagueTable = [Team]() {
+        let currentFixtures = UIButton()
+        currentFixtures.frame = CGRect(x: 10, y: premierLeagueLogo.frame.maxY + spacing, width: screenWidth - 20, height: 400.0)
+        currentFixtures.backgroundColor = .green
+        currentFixtures.setTitle("CURRENT FIXTURES", for: .normal)
+        view.addSubview(currentFixtures)
+        
+        let myQueue = DispatchQueue(label: "Test Queue")
+        
+        var premierLeagueStandings = [Team]() {
             didSet {
                 DispatchQueue.main.async {
-                    print("Data received.")
+                    firstPlacedTeam.displayCrest(ofTeam: premierLeagueStandings[0].team.id)
+                    firstPlacedTeam.displayAmountOfPoints(fromSource: premierLeagueStandings[0].points)
                     
-                    firstPlacedTeam.displayCrest(ofTeam: premierLeagueTable[0].team.id)
-                    firstPlacedTeam.displayAmountOfPoints(fromSource: premierLeagueTable[0].points)
+                    secondPlacedTeam.displayCrest(ofTeam: premierLeagueStandings[1].team.id)
+                    secondPlacedTeam.displayAmountOfPoints(fromSource: premierLeagueStandings[1].points)
                     
-                    secondPlacedTeam.displayCrest(ofTeam: premierLeagueTable[1].team.id)
-                    secondPlacedTeam.displayAmountOfPoints(fromSource: premierLeagueTable[1].points)
+                    thirdPlacedTeam.displayCrest(ofTeam: premierLeagueStandings[2].team.id)
+                    thirdPlacedTeam.displayAmountOfPoints(fromSource: premierLeagueStandings[2].points)
                     
-                    thirdPlacedTeam.displayCrest(ofTeam: premierLeagueTable[2].team.id)
-                    thirdPlacedTeam.displayAmountOfPoints(fromSource: premierLeagueTable[2].points)
-                    
-                    print("Data displayed.")
+                    print("done with test queue")
                 }
             }
         }
@@ -92,23 +109,53 @@ class StartingView: UIViewController, WKNavigationDelegate {
             case .failure(let receivedError):
                 print(receivedError)
             case .success(let receivedData):
-                premierLeagueTable = receivedData
+                premierLeagueStandings = receivedData.standings.self[0].table
+                self.currentMatchday = receivedData.season.currentMatchday
+                self.premierLeagueFixturesDataAdress = "https://api.football-data.org/v2/competitions/2021/matches?matchday=\(self.currentMatchday)"
             }
         }
         
-        let premierLeagueFixtures = CreateRequest(fromAdress: premierLeagueFixturesDataAdress)
-        
-        premierLeagueFixtures.getFixtures { result in
-            switch result {
-            case .failure(let receivedError):
-                print(receivedError)
-            case .success(let receivedData):
-                print("Received \(receivedData.count) fixtures.")
-                print("Data: \(receivedData)")
+        var premierLeagueGames = [Match]() {
+            didSet {
+                DispatchQueue.main.async {
+                    
+                    var fixturesString: String = "Gameweek \(premierLeagueGames[0].matchday) \n\n"
+                    currentFixtures.titleLabel?.numberOfLines = premierLeagueGames.count+3
+                    currentFixtures.titleLabel?.font = .systemFont(ofSize: 15.0)
+                    currentFixtures.titleLabel?.textAlignment = .center
+                    currentFixtures.setTitleColor(.black, for: .normal)
+                    
+                    for game in 0..<premierLeagueGames.count {
+                        fixturesString += "\(premierLeagueGames[game].homeTeam.name) vs \(premierLeagueGames[game].awayTeam.name) \n"
+                    }
+                    
+                    currentFixtures.setTitle(fixturesString, for: .normal)
+                    
+                    print("done after 2 seconds")
+
+                }
+            }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            print("RECEIVED ADRESS: \(self.premierLeagueFixturesDataAdress)")
+            
+            let premierLeagueFixtures = CreateRequest(fromAdress: self.premierLeagueFixturesDataAdress)
+            
+            premierLeagueFixtures.getFixtures { result in
+                switch result {
+                case .failure(let receivedError):
+                    print(receivedError)
+                case .success(let receivedData):
+                    print("Received \(receivedData.count) fixtures.")
+                    premierLeagueGames = receivedData.matches
+                }
             }
         }
     }
+
     //outside viewDidLoad()
+    
     
 }
 
