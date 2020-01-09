@@ -8,12 +8,10 @@ class StartingView: UIViewController, WKNavigationDelegate {
     
     private let screenWidth = UIScreen.main.bounds.size.width
     private let screenHeight = UIScreen.main.bounds.size.height
-    
-    private let spacing : CGFloat = 40.0
-    
-    private var currentMatchday: Int = 1 //default value
-    private let premierLeagueTableDataAdress: String = "https://api.football-data.org/v2/competitions/2021/standings"
-    private var premierLeagueFixturesDataAdress: String = ""
+
+    fileprivate var currentMatchday: Int = 1 //default value
+    fileprivate let premierLeagueTableDataAdress: String = "https://api.football-data.org/v2/competitions/2021/standings"
+    fileprivate var premierLeagueFixturesDataAdress: String = ""
     
     @objc private func displayPremierLeagueWebsite() {
         let premierLeagueWebsiteView = PremierLeagueWebsiteViewController()
@@ -70,15 +68,19 @@ class StartingView: UIViewController, WKNavigationDelegate {
             return topBarButtonSpace
         }()
         
-        let viewWholeTable = UIButton()
-        viewWholeTable.setEqualSizeAndPlaceNextTo(object: thirdPlacedTeam)
-        viewWholeTable.setTitle("●●●", for: .normal)
-        viewWholeTable.titleLabel?.font = .systemFont(ofSize: 10.0)
-        viewWholeTable.addTarget(self, action: #selector(displayStandingsTableView), for: .touchUpInside)
-        view.addSubview(viewWholeTable)
+        let viewWholeTable: UIButton = {
+            let viewMoreButton = UIButton()
+            viewMoreButton.setEqualSizeAndPlaceNextTo(object: thirdPlacedTeam)
+            viewMoreButton.setTitle("●●●", for: .normal)
+            viewMoreButton.titleLabel?.font = .systemFont(ofSize: 10.0)
+            viewMoreButton.addTarget(self, action: #selector(displayStandingsTableView), for: .touchUpInside)
+            view.addSubview(viewMoreButton)
+            return viewMoreButton
+        }()
+        
         
         let currentFixtures = UIButton()
-        currentFixtures.frame = CGRect(x: 10, y: premierLeagueLogo.frame.maxY + spacing, width: screenWidth - 20, height: 400.0)
+        currentFixtures.frame = CGRect(x: 10, y: premierLeagueLogo.frame.maxY + 40.0, width: screenWidth - 20, height: 400.0)
         currentFixtures.backgroundColor = .green
         currentFixtures.setTitle("CURRENT FIXTURES", for: .normal)
         view.addSubview(currentFixtures)
@@ -153,9 +155,7 @@ class StartingView: UIViewController, WKNavigationDelegate {
             }
         }
     }
-
     //outside viewDidLoad()
-    
     
 }
 

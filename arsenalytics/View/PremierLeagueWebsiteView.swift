@@ -6,8 +6,8 @@ import WebKit
 
 class PremierLeagueWebsiteViewController: UIViewController, WKNavigationDelegate {
 
-    private var websiteView: WKWebView!
-    private let adress: String = "https://www.premierleague.com"
+    fileprivate var websiteView: WKWebView!
+    fileprivate let premierLeagueWebsiteAdress: String = "https://www.premierleague.com"
     
     override func loadView() {
         websiteView = WKWebView()
@@ -18,7 +18,7 @@ class PremierLeagueWebsiteViewController: UIViewController, WKNavigationDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let urlAdress = URL(string: adress)!
-        websiteView.load(URLRequest(url: urlAdress))
+        let urlOfPremierLeagueWebsite = URL(string: premierLeagueWebsiteAdress)!
+        websiteView.load(URLRequest(url: urlOfPremierLeagueWebsite))
     }
 }

@@ -5,8 +5,8 @@ import UIKit
 
 class StandingsTableView: UITableViewController {
     
-    private let premierLeagueTableDataAdress: String = "https://api.football-data.org/v2/competitions/2021/standings"
-    private var premierLeagueTable = [Team]() {
+    fileprivate let premierLeagueTableDataAdress: String = "https://api.football-data.org/v2/competitions/2021/standings"
+    fileprivate var premierLeagueTable = [Team]() {
         didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -18,6 +18,8 @@ class StandingsTableView: UITableViewController {
         super.viewDidLoad()
         
         startObservingDeviceOrientation()
+        
+        tableView.register(TeamCustomCell.self, forCellReuseIdentifier: "teamCustomCell")
         
         let premierLeague = CreateRequest(fromAdress: premierLeagueTableDataAdress)
         
@@ -53,13 +55,17 @@ class StandingsTableView: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let teamInTheTable = UITableViewCell(style: .value1, reuseIdentifier: nil)
-        let leagueTable = premierLeagueTable[indexPath.row]
         
-        showLessSeasonDetailsInPortraitMode(of: teamInTheTable, fromDataSource: leagueTable)
-        showMoreSeasonDetailsInLandscapeMode(of: teamInTheTable, fromDataSource: leagueTable)
+        let teamInTheTable = tableView.dequeueReusableCell(withIdentifier: "teamCustomCell", for: indexPath) as! TeamCustomCell
+        _ = premierLeagueTable[indexPath.row]
+        
+        teamInTheTable.leagueTable = premierLeagueTable[indexPath.row]
         
         return teamInTheTable
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80.0
     }
     
 }
