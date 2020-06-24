@@ -18,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let tableViewWindow = (scene as? UIWindowScene) else { return }
         
-        let navigationController = UINavigationController(rootViewController: StartingView())
+        let navigationController = UINavigationController(rootViewController: MainViewController())
         
         window = UIWindow(frame: tableViewWindow.coordinateSpace.bounds)
         window?.windowScene = tableViewWindow
